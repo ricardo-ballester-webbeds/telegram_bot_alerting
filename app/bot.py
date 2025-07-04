@@ -7,14 +7,46 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 import asyncio
+import boto3
+from botocore.exceptions import ClientError
+
+def get_secret():
+    secret_name = "telegram/bot/credentials"
+    region_name = "eu-west-3"
+
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        # For a list of exceptions thrown, see
+        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        raise e
+
+    secret = get_secret_value_response['SecretString']
+    return secret
+
+secrets = get_secret()
 
 # Cargar variables de entorno desde el archivo .env
 load_dotenv()
 
 app = Flask(__name__)
 
-TOKEN = os.getenv("TELEGRAM_TOKEN")
-CHANNEL_ID = os.getenv("TELEGRAM_CHAT_ID") # os.getenv("TELEGRAM_CHANNEL_ID")
+# Running locally
+# TOKEN = os.getenv("TELEGRAM_TOKEN")
+# CHANNEL_ID = os.getenv("TELEGRAM_CHAT_ID") # os.getenv("TELEGRAM_CHANNEL_ID")
+
+# Running in AWS
+TOKEN = secrets["TELEGRAM_TOKEN"]
+CHAT_ID = secrets["TELEGRAM_CHAT_ID"] # secrets["TELEGRAM_CHANNEL_ID"]
 
 active_alert = True
 # repeat = True
