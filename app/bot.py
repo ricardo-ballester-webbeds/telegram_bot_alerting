@@ -9,6 +9,7 @@ from datetime import datetime
 import asyncio
 import boto3
 from botocore.exceptions import ClientError
+import json
 
 def get_secret():
     secret_name = "telegram/bot/credentials"
@@ -30,7 +31,7 @@ def get_secret():
         # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
         raise e
 
-    secret = get_secret_value_response['SecretString']
+    secret = json.loads(get_secret_value_response['SecretString'])
     return secret
 
 secrets = get_secret()
