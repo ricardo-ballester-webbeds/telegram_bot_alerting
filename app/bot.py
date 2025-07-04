@@ -212,7 +212,8 @@ def telegram_webhook():
 
 if __name__ == '__main__':
     threading.Thread(target=repeat_alerts, args=(loop,), daemon=True).start()
-    app.run(port=5000)
+    app.run(host="0.0.0.0",port=5000,debug=True)
+    # app.run(port=5000)
     send_finish_message = asyncio.run_coroutine_threadsafe(
         application.bot.send_message(chat_id=CHANNEL_ID, text='❌ BOT Stopped! ❌'),
         loop
