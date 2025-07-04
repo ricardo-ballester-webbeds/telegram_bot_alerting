@@ -47,7 +47,7 @@ app = Flask(__name__)
 
 # Running in AWS
 TOKEN = secrets["TELEGRAM_TOKEN"]
-CHAT_ID = secrets["TELEGRAM_CHAT_ID"] # secrets["TELEGRAM_CHANNEL_ID"]
+CHANNEL_ID = secrets["TELEGRAM_CHAT_ID"] # secrets["TELEGRAM_CHANNEL_ID"]
 
 active_alert = True
 # repeat = True
