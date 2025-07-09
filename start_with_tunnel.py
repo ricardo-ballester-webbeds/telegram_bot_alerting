@@ -8,7 +8,7 @@ from botocore.exceptions import ClientError
 import json
 import asyncio
 from telegram import Bot
-from telegram.ext import ContextTypes, Application, CommandHandler, MessageHandler, filters
+# from telegram.ext import ContextTypes, Application, CommandHandler, MessageHandler, filters
 
 
 def get_secret():
@@ -69,10 +69,10 @@ if not public_url:
     exit(1)
 print(f"✅ Detected URL: {public_url}")
 
-set_webhook_url = f"https://api.telegram.org/bot{TOKEN}/setWebhook"
-response = requests.post({public_url}, json={"url": f"{public_url}/{TOKEN}"})
+set_webhook_url = f"https://api.telegram.org/bot{TOKEN}/setWebhook?url={public_url}/{TOKEN}"
+response = requests.post(public_url)
 
-application = Application.builder().token(TOKEN).build()
+# application = Application.builder().token(TOKEN).build()
 # loop = asyncio.new_event_loop()
 # asyncio.set_event_loop(loop)
 # loop.run_until_complete(asyncio.sleep(0))  # Ensure the event loop is running
