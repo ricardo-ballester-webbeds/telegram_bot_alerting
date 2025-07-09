@@ -70,7 +70,7 @@ if not public_url:
 print(f"✅ Detected URL: {public_url}")
 
 set_webhook_url = f"https://api.telegram.org/bot{TOKEN}/setWebhook?url={public_url}/{TOKEN}"
-response = requests.post(public_url)
+response = requests.get(set_webhook_url)
 
 # application = Application.builder().token(TOKEN).build()
 # loop = asyncio.new_event_loop()
