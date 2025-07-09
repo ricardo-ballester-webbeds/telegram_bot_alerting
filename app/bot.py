@@ -35,13 +35,10 @@ def get_secret():
     return secret
 
 secrets = get_secret()
-
-# Cargar variables de entorno desde el archivo .env
-load_dotenv()
-
 app = Flask(__name__)
 
 # Running locally
+# load_dotenv()
 # TOKEN = os.getenv("TELEGRAM_TOKEN")
 # CHANNEL_ID = os.getenv("TELEGRAM_CHAT_ID") # os.getenv("TELEGRAM_CHANNEL_ID")
 
@@ -50,14 +47,14 @@ TOKEN = secrets["TELEGRAM_TOKEN"]
 CHANNEL_ID = secrets["TELEGRAM_CHAT_ID"] # secrets["TELEGRAM_CHANNEL_ID"]
 
 active_alert = True
-# repeat = True
+# repeat = True # disabled due to logic change -> repeat_event = threading.Event() # used to control the repeat loop
 start_time = None
 end_time = None
 
 bot = Bot(token=TOKEN)
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
-# Construcción de la app
+# App Construction
 application = Application.builder().token(TOKEN).build()
 repeat_event = threading.Event()
 
@@ -65,13 +62,15 @@ async def setup_application():
     await application.initialize()
     print("✅ Application initialized")
 
-# Inicializar la aplicación de forma asíncrona
+# Async startup function to initialize the application
 loop.run_until_complete(setup_application())
 
+# Initial message to the channel
 asyncio.run_coroutine_threadsafe(
     application.bot.send_message(chat_id=CHANNEL_ID, text='🚨 BOT Started!'),
     loop
 )
+
 
 def start_loop(loop):
     asyncio.set_event_loop(loop)
@@ -141,10 +140,20 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text('❌ Wrong Format. Use "/start 21-07" to set alert from 21:00 to 07:00 UTC or /start for 24h Cover.')
         return
+    
+async def help():
+    help_text = (
+        "🆘 Help:\n"
+        "/start HH-HH - Start alerts from HH:00 to HH:00 UTC.\n"
+        "/break - Pause alerts until the next hour.\n"
+        "/stop - Stops all alerts until the next /start command."
+    )
+    await application.bot.send_message(chat_id=CHANNEL_ID, text=help_text)
 
 application.add_handler(CommandHandler('stop', stop))
 application.add_handler(CommandHandler('start', start))
 application.add_handler(CommandHandler('break', break_command))
+application.add_handler(CommandHandler('help', help))
 print("✅ Handlers for /start, /break and /stop added")
 
 @app.route('/webhook', methods=['POST'])
