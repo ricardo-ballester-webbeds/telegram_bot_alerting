@@ -93,5 +93,7 @@ asyncio.run(notify())
 try:
     lt_process.wait()
 except KeyboardInterrupt:
-    print("🛑 Stopping LocalTunnel...")
+    stop_text='Stopping LocalTunnel... 🛑'
+    print(stop_text)
+    bot.send_message(chat_id=CHANNEL_ID, text=stop_text)
     lt_process.terminate()
