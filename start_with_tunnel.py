@@ -68,20 +68,19 @@ if not public_url:
     lt_process.terminate()
     exit(1)
 print(f"✅ Detected URL: {public_url}")
-webhook_url = f"{public_url}"
 
 set_webhook_url = f"https://api.telegram.org/bot{TOKEN}/setWebhook"
-response = requests.post(set_webhook_url, json={"url": f"{webhook_url}/{TOKEN}"})
+response = requests.post({public_url}, json={"url": f"{public_url}/{TOKEN}"})
 
 application = Application.builder().token(TOKEN).build()
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
-loop.run_until_complete(asyncio.sleep(0))  # Ensure the event loop is running
+# loop = asyncio.new_event_loop()
+# asyncio.set_event_loop(loop)
+# loop.run_until_complete(asyncio.sleep(0))  # Ensure the event loop is running
 
 async def notify():
     if response.status_code == 200 and response.json().get("ok"):
-        print(f"✅ Webhook configured: {webhook_url}")
-        await bot.send_message(chat_id=CHANNEL_ID, text='Webhook configured successfully! 🚀\rBot is still not running.')
+        print(f"✅ Webhook configured: {public_url}")
+        await bot.send_message(chat_id=CHANNEL_ID, text='Webhook configured successfully! 🚀')
     else:
         print(f"❌ Error configuring webhook: {response.text}")
         await bot.send_message(chat_id=CHANNEL_ID, text='Webhook configuration failed. Please check LocalTunnel and try again. ❌')
@@ -89,7 +88,7 @@ async def notify():
         exit(1)
     print("📡 Awaiting Bot. Ctrl+C to stop.")
 
-asyncio.run_coroutine_threadsafe(notify(), loop)
+asyncio.run(notify())
 
 try:
     lt_process.wait()
