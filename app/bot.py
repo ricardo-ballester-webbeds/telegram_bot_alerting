@@ -98,7 +98,7 @@ def repeat_alerts(loop):
                 application.bot.send_message(chat_id=CHANNEL_ID, text='🔔 Alert Reminder!'),
                 loop
             )
-        time.sleep(5)  # (180)
+        time.sleep(180)
 
 async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global active_alert, repeat_event
@@ -145,7 +145,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 application.add_handler(CommandHandler('stop', stop))
 application.add_handler(CommandHandler('start', start))
 application.add_handler(CommandHandler('break', break_command))
-print("✅ Handlers for /start and /stop added")
+print("✅ Handlers for /start, /break and /stop added")
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -212,7 +212,7 @@ def telegram_webhook():
 
 if __name__ == '__main__':
     threading.Thread(target=repeat_alerts, args=(loop,), daemon=True).start()
-    app.run(host="0.0.0.0",port=5000,debug=True)
+    app.run(host="0.0.0.0",port=5000,debug=False)
     # app.run(port=5000)
     send_finish_message = asyncio.run_coroutine_threadsafe(
         application.bot.send_message(chat_id=CHANNEL_ID, text='❌ BOT Stopped! ❌'),
