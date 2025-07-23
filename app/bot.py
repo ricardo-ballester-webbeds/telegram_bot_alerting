@@ -141,14 +141,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text('❌ Wrong Format. Use "/start 21-07" to set alert from 21:00 to 07:00 UTC or /start for 24h Cover.')
         return
     
-async def help():
+async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
         "🆘 Help:\n"
         "/start HH-HH - Start alerts from HH:00 to HH:00 UTC.\n"
         "/break - Pause alerts until the next hour.\n"
         "/stop - Stops all alerts until the next /start command."
     )
-    await application.bot.send_message(chat_id=CHANNEL_ID, text=help_text)
+    await update.message.reply_text(chat_id=CHANNEL_ID, text=help_text)
 
 application.add_handler(CommandHandler('stop', stop))
 application.add_handler(CommandHandler('start', start))
